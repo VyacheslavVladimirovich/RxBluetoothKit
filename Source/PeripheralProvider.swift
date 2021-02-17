@@ -2,12 +2,15 @@ import Foundation
 import CoreBluetooth
 
 /// Class for providing peripherals and peripheral wrappers
-class PeripheralProvider {
+public class PeripheralProvider {
 
     private let peripheralsBox: ThreadSafeBox<[Peripheral]> = ThreadSafeBox(value: [])
 
     private let delegateWrappersBox: ThreadSafeBox<[UUID: CBPeripheralDelegateWrapper]> = ThreadSafeBox(value: [:])
 
+    public init() {
+    }
+    
     /// Provides `CBPeripheralDelegateWrapper` for specified `CBPeripheral`.
     ///
     /// If it was previously created it returns that object, so that there can be only

@@ -3,13 +3,13 @@ import RxSwift
 import CoreBluetooth
 
 /// `Connector` is a class that is responsible for establishing connection with peripherals.
-class Connector {
+public class Connector {
     let centralManager: CBCentralManager
     let delegateWrapper: CBCentralManagerDelegateWrapper
     let connectedBox: ThreadSafeBox<Set<UUID>> = ThreadSafeBox(value: [])
     let disconnectingBox: ThreadSafeBox<Set<UUID>> = ThreadSafeBox(value: [])
 
-    init(
+    public init(
         centralManager: CBCentralManager,
         delegateWrapper: CBCentralManagerDelegateWrapper
     ) {
