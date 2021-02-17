@@ -27,7 +27,7 @@ public typealias DisconnectionReason = Error
 public class CentralManager: ManagerType {
 
     /// Implementation of CBCentralManager
-    public let manager: CBCentralManager
+    public var manager: CBCentralManager
 
     @available(*, deprecated, renamed: "CentralManager.manager")
     public var centralManager: CBCentralManager { return manager }
@@ -52,7 +52,7 @@ public class CentralManager: ManagerType {
     /// - parameter delegateWrapper: Wrapper on CoreBluetooth's central manager callbacks.
     /// - parameter peripheralProvider: Provider for providing peripherals and peripheral wrappers
     /// - parameter connector: Connector instance which is used for establishing connection with peripherals.
-    init(
+    public init(
         centralManager: CBCentralManager,
         delegateWrapper: CBCentralManagerDelegateWrapper,
         peripheralProvider: PeripheralProvider,
@@ -64,6 +64,10 @@ public class CentralManager: ManagerType {
         self.connector = connector
         centralManager.delegate = delegateWrapper
     }
+    
+    deinit {
+        print("Deinit central manager -----------------")
+    }
 
     /// Creates new `CentralManager` instance. By default all operations and events are executed and received on main thread.
     /// - warning: If you pass background queue to the method make sure to observe results on main thread for UI related code.
@@ -73,18 +77,18 @@ public class CentralManager: ManagerType {
     /// - parameter cbCentralManager: Optional instance of `CBCentralManager` to be used as a `manager`. If you
     /// skip this parameter, there will be created an instance of `CBCentralManager` using given queue and options.
     public convenience init(queue: DispatchQueue = .main,
-                            options: [String: AnyObject]? = nil,
-                            cbCentralManager: CBCentralManager? = nil) {
-        let delegateWrapper = CBCentralManagerDelegateWrapper()
-        let centralManager = cbCentralManager ??
-            CBCentralManager(delegate: delegateWrapper, queue: queue, options: options)
-        self.init(
-            centralManager: centralManager,
-            delegateWrapper: delegateWrapper,
-            peripheralProvider: PeripheralProvider(),
-            connector: Connector(centralManager: centralManager, delegateWrapper: delegateWrapper)
-        )
-    }
+                        options: [String: AnyObject]? = nil,
+                        cbCentralManager: CBCentralManager? = nil) {
+    let delegateWrapper = CBCentralManagerDelegateWrapper()
+    let centralManager = cbCentralManager ??
+        CBCentralManager(delegate: delegateWrapper, queue: queue, options: options)
+    self.init(
+        centralManager: centralManager,
+        delegateWrapper: delegateWrapper,
+        peripheralProvider: PeripheralProvider(),
+        connector: Connector(centralManager: centralManager, delegateWrapper: delegateWrapper)
+    )
+}
 
     /// Attaches RxBluetoothKit delegate to CBCentralManager.
     /// This method is useful in cases when delegate of CBCentralManager was reassigned outside of
